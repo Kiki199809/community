@@ -1,0 +1,56 @@
+server:
+  port: 8080  #Tomcat端口号
+  servlet:
+    context-path: /community  #web的项目路径前缀
+
+spring:
+  #连接池配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: 123456
+    url: jdbc:mysql://localhost:3306/community?false&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
+    username: root
+    type: com.zaxxer.hikari.HikariDataSource  #HikariDataSource连接池
+    hikari:
+      idle-timeout: 30000 #超时时间
+      maximum-pool-size: 15 #最大连接数
+      minimum-idle: 5 #最小空闲连接
+  thymeleaf:
+    cache: false  #关闭thymeleaf缓存
+
+#logging:
+#  level:
+#    #log4j的日志记录器(Logger)的日志级别(com.it.community范围为debug)，可以打印预编译的sql
+#    com:
+#      it:
+#        community: debug
+#  #日志存储位置与文件名
+#  file:
+#    name: f:/community.log
+
+#MybatisProperties(使用MyBatis-plus后，将mybatis的配置挪到其下)
+mybatis:
+  #mapper配置类所在位置classpath代表resources根目录(注解方式添加@Mapper注解，扫描进spring容器即可)
+  mapper-locations: classpath:mapper/*.xml
+  #该包下所有实体都设置别名，为首字母小写实体名称
+  type-aliases-package: com.it.community.entity
+  configuration:
+    #配置mybatis日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #启用sql表下划线命名和java驼峰命名对应
+    map-underscore-to-camel-case: true
+    #启用自动生成主键
+    use-generated-keys: true
+
+pagehelper:
+  #方言类型为mysql
+  helper-dialect: mysql
+  #配置映射
+  params: count=countSql
+  #<!-- 3.3.0版本可用 - 分页参数合理化，默认false禁用 -->
+  #<!-- 启用合理化时，如果pageNum<1会查询第一页，如果pageNum>pages会查询最后一页 -->
+  #<!-- 禁用合理化时，如果pageNum<1或pageNum>pages会返回空数据 -->
+  reasonable: true
+  #支持通过 Mapper 接口参数来传递分页参数
+  support-methods-arguments: true
+
