@@ -15,6 +15,75 @@
         <result property="score" column="score" jdbcType="NUMERIC"/>
     </resultMap>
 
+    <!--修改帖子类型-->
+    <update id="updateType">
+        update community.discuss_post
+        <set>
+            type = #{type},
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--修改帖子状态-->
+    <update id="updateStatus">
+        update community.discuss_post
+        <set>
+            status = #{status},
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--修改帖子分数-->
+    <update id="updateScore">
+        update community.discuss_post
+        <set>
+                score = #{score},
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--修改帖子评论数量-->
+    <update id="updateCommentCountById">
+        update community.discuss_post
+        <set>
+            <if test="commentCount != null">
+                comment_count = #{commentCount},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--查询（某个用户未被拉黑的帖子总数）-->
+    <select id="selectDiscussPostRows" resultType="int">
+        select count(id)
+        from community.discuss_post
+        where status != 2
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+    </select>
+
+    <!--查询某个用户或者所有用户的未被拉黑的帖子-->
+    <!--通过传入类型来判断是否按照热帖排行-->
+    <select id="selectDiscussPosts" resultMap="BaseResultMap">
+        select
+         id, user_id, title, content, type, status, create_time, comment_count, score
+        from community.discuss_post
+        where status != 2
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="orderMode==0">
+            order by type desc, create_time desc
+        </if>
+        <if test="orderMode==1">
+            order by type desc, score desc, create_time desc
+        </if>
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--查询某个用户或者所有用户的未被拉黑的帖子-->
+    <!--通过传入类型来判断是否按照热帖排行-->
     <select id="queryByUserIdAndStatus" resultMap="BaseResultMap">
         select
          id, user_id, title, content, type, status, create_time, comment_count, score
@@ -23,7 +92,12 @@
         <if test="userId != null">
             and user_id = #{userId}
         </if>
-        order by type desc, create_time desc
+        <if test="orderMode == 0">
+            order by type desc, create_time desc
+        </if>
+        <if test="orderMode == 1">
+            order by type desc, score desc, create_time desc
+        </if>
     </select>
 
     <!--查询单个-->

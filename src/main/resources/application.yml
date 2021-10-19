@@ -1,56 +1,158 @@
 server:
-  port: 8080  #Tomcat端口号
+  port: 8080  # Tomcat端口号
   servlet:
-    context-path: /community  #web的项目路径前缀
+    context-path: /community  # web的项目路径前缀
 
 spring:
-  #连接池配置
+  # 连接池配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: 123456
     url: jdbc:mysql://localhost:3306/community?false&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
     username: root
-    type: com.zaxxer.hikari.HikariDataSource  #HikariDataSource连接池
+    type: com.zaxxer.hikari.HikariDataSource  # HikariDataSource连接池
     hikari:
-      idle-timeout: 30000 #超时时间
-      maximum-pool-size: 15 #最大连接数
-      minimum-idle: 5 #最小空闲连接
+      idle-timeout: 30000 # 超时时间
+      maximum-pool-size: 15 # 最大连接数
+      minimum-idle: 5 # 最小空闲连接
   thymeleaf:
-    cache: false  #关闭thymeleaf缓存
+    cache: false  # 关闭thymeleaf缓存
+  # spring mail
+  mail:
+    host: smtp.qq.com # 发送邮件服务器
+    username: 2397637186@qq.com # QQ邮箱
+    password: fbwkckqbrmdddibh # 客户端授权码
+    protocol: smtp # 发送邮件协议
+    properties.mail.smtp.auth: true
+    properties.mail.smtp.port: 465 # 端口号465或587
+    properties.mail.display.sendmail: aaa # 可以任意
+    properties.mail.display.sendname: bbb # 可以任意
+    properties.mail.smtp.starttls.enable: true
+    properties.mail.smtp.starttls.required: true
+    properties.mail.smtp.ssl.enable: true # 开启SSL
+    default-encoding: utf-8
+  # RedisProperties
+  redis:
+    database: 11  # 选择16个库中的一个
+    host: localhost
+    port: 6379
+  # KafkaProperties
+  kafka:
+    bootstrap-servers: localhost:9092 # 目标集群的服务器地址
+    consumer:
+      group-id: community-consumer-group # 消费者组id
+      enable-auto-commit: true  # 是否自动提交消费者的偏移量
+      auto-commit-interval: 3000  # 自动提交频率，3s
+  # ElasticsearchProperties
+  data:
+    elasticsearch:
+      cluster-name: community # 集群名
+      cluster-nodes: 127.0.0.1:9300 # 9200是http端口，9300是tcp端口
+  # spring线程池
+  task:
+    # TaskExecutionProperties（普通）
+    execution:
+      pool:
+        core-size: 5  # 核心线程池线程数
+        max-size: 15  # 最大扩容数
+        queue-capacity: 100 # 队列容量，缓冲任务
+    # TaskSchedulingProperties（可执行定时任务）
+    scheduling:
+      pool:
+        size: 5
+  # QuartzProperties
+  quartz:
+    job-store-type: jdbc  # 任务存储方式
+    properties:
+      org:
+        quartz:
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX  # 存入数据库所使用的类
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate # jdbc驱动
+            isClustered: true # 是否采用集群
+          scheduler:
+            instanceId: AUTO  # 调度器ID自动生成
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool  # 线程池
+            threadCount: 5  # 线程数
+    scheduler-name: communityScheduler  # 调度器名
 
-#logging:
-#  level:
-#    #log4j的日志记录器(Logger)的日志级别(com.it.community范围为debug)，可以打印预编译的sql
-#    com:
-#      it:
-#        community: debug
-#  #日志存储位置与文件名
-#  file:
-#    name: f:/community.log
 
-#MybatisProperties(使用MyBatis-plus后，将mybatis的配置挪到其下)
+
+
+# logging:
+#   level:
+#     # 日志记录器(Logger)的日志级别(com.it.community范围为debug)，可以打印预编译的sql
+#     com:
+#       it:
+#         community: debug
+#   # 日志存储位置与文件名
+#   file:
+#     name: f:/community.log
+
+# MybatisProperties
 mybatis:
-  #mapper配置类所在位置classpath代表resources根目录(注解方式添加@Mapper注解，扫描进spring容器即可)
+  # mapper配置类所在位置classpath代表resources根目录(注解方式添加@Mapper注解，扫描进spring容器即可)
   mapper-locations: classpath:mapper/*.xml
-  #该包下所有实体都设置别名，为首字母小写实体名称
+  # 该包下所有实体都设置别名，为首字母小写实体名称
   type-aliases-package: com.it.community.entity
   configuration:
-    #配置mybatis日志
+    # 配置mybatis日志
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-    #启用sql表下划线命名和java驼峰命名对应
+    # 启用sql表下划线命名和java驼峰命名对应
     map-underscore-to-camel-case: true
-    #启用自动生成主键
+    # 启用自动生成主键（注册时回填id）
     use-generated-keys: true
 
 pagehelper:
-  #方言类型为mysql
+  # 方言类型为mysql
   helper-dialect: mysql
-  #配置映射
+  # 配置映射
   params: count=countSql
-  #<!-- 3.3.0版本可用 - 分页参数合理化，默认false禁用 -->
-  #<!-- 启用合理化时，如果pageNum<1会查询第一页，如果pageNum>pages会查询最后一页 -->
-  #<!-- 禁用合理化时，如果pageNum<1或pageNum>pages会返回空数据 -->
+  # <!-- 3.3.0版本可用 - 分页参数合理化，默认false禁用 -->
+  # <!-- 启用合理化时，如果pageNum<1会查询第一页，如果pageNum>pages会查询最后一页 -->
+  # <!-- 禁用合理化时，如果pageNum<1或pageNum>pages会返回空数据 -->
   reasonable: true
-  #支持通过 Mapper 接口参数来传递分页参数
+  # 支持通过 Mapper 接口参数来传递分页参数
   support-methods-arguments: true
 
+# 自定义配置
+community:
+  path:
+    # 项目域名
+    domain: http://localhost:8080
+    # 文件上传存放位置地址
+    upload-path: e:/community/data/upload
+
+# 自定义配置wk
+wk:
+  image:
+    command: c:/soft/wkhtmltopdf/bin/wkhtmltoimage  # .bat命令所在位置
+    storage: e:/community/data/wk-images # 图片存储位置
+
+# 七牛云自定义配置
+qiniu:
+  key:
+    access: uDpXTY_pJ4XrXAk3CmhYlAuJsFLTO6MUkul0Uv5b # 密钥
+    secret: fSTFiqcS8ABNElna_BUu8PgMANcWV9HN5vZSPfVN # 密钥
+  bucket:
+    header:
+      name: xq-community-header # 存放空间名
+      url: http://r12aile45.hn-bkt.clouddn.com  # 访问链接
+    share:
+      name: xq-community-share  # 存放空间名
+      url: http://r12a80gm7.hn-bkt.clouddn.com  # 访问链接
+
+# caffeine自定义配置
+caffeine:
+  posts:
+    max-size: 15  # 最大缓存数量
+    expire-seconds: 180 # 3min后自动过期（不主动更新，所以点赞和评论等会有延迟）
+
+# actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  # 将所有的监控endpoint暴露出来
+        exclude: info,caches  # 不暴露info,caches

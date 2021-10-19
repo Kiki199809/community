@@ -13,12 +13,69 @@ import java.util.List;
  */
 @Mapper
 public interface DiscussPostDao {
+
+    /**
+     * Description: 修改帖子类型
+     *
+     * @param id:
+     * @param type:
+     * @return int:
+     */
+    int updateType(int id, int type);
+
+    /**
+     * Description: 修改帖子状态
+     *
+     * @param id:
+     * @param status:
+     * @return int:
+     */
+    int updateStatus(int id, int status);
+
+    /**
+     * Description: 修改帖子分数
+     *
+     * @param id:
+     * @param score:
+     * @return int:
+     */
+    int updateScore(int id, double score);
+
+    /**
+     * 通过id修改帖子评论数量
+     *
+     * @param id 帖子id
+     * @param commentCount 贴子评论数量
+     * @return 影响行数
+     */
+    int updateCommentCountById(int id, int commentCount);
+
     /**
      * Description: 通过userId查询所有数据（排除拉黑status != 2）
      * @param userId:
+     * @param orderMode: 0-普通排序（置顶，时间） 1-热帖排序（置顶，分数，时间）
      * @return 对象列表
      */
-    List<DiscussPost> queryByUserIdAndStatus(Integer userId);
+    List<DiscussPost> queryByUserIdAndStatus(Integer userId, int orderMode);
+
+    /**
+     * Description: 通过userId查询所有数据（排除拉黑status != 2）
+     * @param userId:
+     * @param offset:
+     * @param limit:
+     * @param orderMode: 0-普通排序（置顶，时间） 1-热帖排序（置顶，分数，时间）
+     * @return java.util.List<com.it.community.entity.DiscussPost>:
+     */
+    List<DiscussPost> selectDiscussPosts(Integer userId, int offset, int limit, int orderMode);
+
+
+    /**
+     * Description: 通过userId查询所有数据总数（排除拉黑status != 2）
+     *
+     * @param userId:
+     * @return int:
+     */
+    int selectDiscussPostRows(Integer userId);
 
     /**
      * 通过ID查询单条数据

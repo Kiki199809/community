@@ -14,6 +14,32 @@ import java.util.List;
 @Mapper
 public interface UserDao {
 
+
+    /**
+     * 修改数据
+     *
+     * @param id 主键
+     * @param headerUrl 头像地址
+     * @return 影响行数
+     */
+    int updateHeaderUrlById(int id,String headerUrl);
+
+    /**
+     * 通过username查询单条数据
+     *
+     * @param username 用户名
+     * @return 实例对象
+     */
+    User queryByUsername(String username);
+
+    /**
+     * 通过email查询单条数据
+     *
+     * @param email 邮箱
+     * @return 实例对象
+     */
+    User queryByEmail(String email);
+
     /**
      * 通过ID查询单条数据
      *

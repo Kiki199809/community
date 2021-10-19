@@ -16,6 +16,34 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+
+    <!--通过主键修改headUrl-->
+    <update id="updateHeaderUrlById">
+        update community.user
+        <set>
+            <if test="headerUrl != null and headerUrl != ''">
+                header_url = #{headerUrl},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过用户名查询单个-->
+    <select id="queryByUsername" resultMap="BaseResultMap">
+        select
+            id, username, password, salt, email, type, status, activation_code, header_url, create_time
+        from community.user
+        where username = #{username}
+    </select>
+
+    <!--通过邮箱查询单个-->
+    <select id="queryByEmail" resultMap="BaseResultMap">
+        select
+            id, username, password, salt, email, type, status, activation_code, header_url, create_time
+        from community.user
+        where email = #{email}
+    </select>
+
     <!--查询单个-->
     <select id="queryById" resultMap="BaseResultMap">
         select

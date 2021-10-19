@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.community.dao.LoginTicketDao">
+
+    <resultMap id="BaseResultMap" type="com.it.community.entity.LoginTicket">
+        <!--@Table login_ticket-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="ticket" column="ticket" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="expired" column="expired" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--通过Ticket修改状态-->
+    <update id="updateStatusByTicket">
+        update community.login_ticket
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where ticket = #{ticket}
+    </update>
+
+    <!--通过Ticket查询单个-->
+    <select id="queryByTicket" resultMap="BaseResultMap">
+        select
+            id, user_id, ticket, status, expired
+        from community.login_ticket
+        where ticket = #{ticket}
+    </select>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BaseResultMap">
+        select
+          id, user_id, ticket, status, expired
+        from community.login_ticket
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BaseResultMap">
+        select
+          id, user_id, ticket, status, expired
+        from community.login_ticket
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BaseResultMap">
+        select
+          id, user_id, ticket, status, expired
+        from community.login_ticket
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="ticket != null and ticket != ''">
+                and ticket = #{ticket}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="expired != null">
+                and expired = #{expired}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into community.login_ticket(user_id, ticket, status, expired)
+        values (#{userId}, #{ticket}, #{status}, #{expired})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update community.login_ticket
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="ticket != null and ticket != ''">
+                ticket = #{ticket},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="expired != null">
+                expired = #{expired},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from community.login_ticket where id = #{id}
+    </delete>
+
+</mapper>

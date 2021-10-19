@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <contextName>community</contextName>
-    <property name="LOG_PATH" value="C:/work/data"/>
+    <!--日志文件输出地址和目录-->
+    <property name="LOG_PATH" value="E:/community/data"/>
     <property name="APPDIR" value="community"/>
 
     <!-- error file -->
@@ -70,7 +71,7 @@
         </filter>
     </appender>
 
-    <!-- console -->
+    <!-- console控制台 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
@@ -81,6 +82,7 @@
         </filter>
     </appender>
 
+    <!--项目com.it.community的日志级别为debug-->
     <logger name="com.it.community" level="debug"/>
 
     <root level="info">
